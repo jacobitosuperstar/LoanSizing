@@ -1,11 +1,12 @@
 // Opinionated Financial Formulas. Every money value rounded down to 2 decimal
 // places.
-
 // TODO: Formulas needed
+// [X] IOPayment (monthly)
+// [X] YearlyIOPayment
+// [X] Payment (monthly)
+// [X] YearlyPayment
 // [X] PrincipalPayment (monthly)
 // [X] InterestPayment (monthly)
-// [X] Payment (monthly, yearly)
-// [X] IOPayment (monthly, yearly)
 // [X] PresentValue
 
 package financial_formulas
@@ -64,8 +65,8 @@ func Payment(
     pmt float64,
     err error,
 ) {
-    if numPeriods < 0 {
-		return 0.0, errors.New("The periods must be greater or equal to 0")
+    if numPeriods <= 0 {
+		return 0.0, errors.New("The periods must be greater than 0")
 	}
 	if paymentType != PayEnd && paymentType != PayBegin {
 		return 0.0, errors.New("payment type must be pay-end or pay-begin")
@@ -156,13 +157,12 @@ func PrincipalPayments(
     if err != nil {
         return ppmt, err
     }
-
     return ppmt, nil
 }
 
 // InterestPayments returns an array and an error of all the interest payments
 // during the number of periods
-func InterestPayment(
+func InterestPayments(
     rate float64,
     numPeriods int,
     pv float64,
@@ -177,7 +177,6 @@ func InterestPayment(
     if err != nil {
         return ipmt, err
     }
-
     return ipmt, nil
 }
 
@@ -193,8 +192,8 @@ func PresentValue(
     pv float64,
     err error,
 ) {
-    if numPeriods < 0 {
-        return 0, errors.New("Number of periods must be positive")
+    if numPeriods <= 0 {
+        return 0, errors.New("Number of periods must be greater than 0")
     }
     if paymentType != PayEnd && paymentType != PayBegin {
         return 0, errors.New("Payment must be pay-end or pay-begin")
