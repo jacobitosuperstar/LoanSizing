@@ -7,7 +7,6 @@ import (
     "log";
     "time";
     "net/http";
-    utils "jacobitosuperstar/LoanSizing/internal/utils";
 )
 
 const PORT = ":8000";
@@ -38,5 +37,5 @@ func handleRoot(
     response := HealthCheckResponse{
         Now: time.Now(),
     }
-    utils.JSONResponse(w, http.StatusOK, response)
+    JSONResponse(w, http.StatusOK, response)
 }
