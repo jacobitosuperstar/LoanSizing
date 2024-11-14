@@ -12,8 +12,9 @@
 package financial_formulas
 
 import (
-	"errors"
-	"math"
+    "log";
+    "fmt";
+	"math";
 )
 
 const (
@@ -22,8 +23,8 @@ const (
 )
 
 
-// round2 returns a float number rounded to 2 decimals
-func round2(num float64) float64 {
+// Round2 returns a float number rounded to 2 decimals
+func Round2(num float64) float64 {
     return (math.Round(num*100)/100)
 }
 
@@ -34,10 +35,9 @@ func IOPayment(
     pv float64,
 ) (
     pmt float64,
-    err error,
 ) {
     pmt = (pv*rate)
-    return round2(pmt), nil
+    return Round2(pmt)
 }
 
 // YearlyIOPayment returns the yearly interest only payment for a cash flow
@@ -47,10 +47,9 @@ func YearlyIOPayment(
     pv float64,
 ) (
     pmt float64,
-    err error,
 ) {
     pmt = 12*(pv*rate)
-    return round2(pmt), nil
+    return Round2(pmt)
 }
 
 // Payment returns the constant payment for a cash flow with a constant
@@ -66,17 +65,17 @@ func Payment(
     err error,
 ) {
     if numPeriods <= 0 {
-		return 0.0, errors.New("The periods must be greater than 0")
+        return 0.0, &ValidationError{"numPeriods", numPeriods, "The value must be greater than 0"}
 	}
 	if paymentType != PayEnd && paymentType != PayBegin {
-		return 0.0, errors.New("payment type must be pay-end or pay-begin")
+		return 0.0, &ValidationError{"paymentType", paymentType, "The value must be 0 (PayEnd) or 1 (PayBegin)"}
 	}
 	if rate != 0 {
 		pmt = (-fv - pv*math.Pow(1+rate, float64(numPeriods))) / (1 + rate*float64(paymentType)) / ((math.Pow(1+rate, float64(numPeriods)) - 1) / rate)
 	} else {
 		pmt = (-pv - fv) / float64(numPeriods)
 	}
-	return round2(pmt), nil
+	return Round2(pmt), nil
 }
 
 // YearlyPayment returns the yearly loan payment for a cash flow with a
@@ -94,14 +93,14 @@ func YearlyPayment(
     pmt, err = Payment(rate, numPeriods, pv, fv, paymentType)
 
     if err != nil {
-        return 0, err
+        return 0, fmt.Errorf("YearlyPaymet internal error: %v", err)
     }
-    return round2(12*pmt), nil
+    return Round2(12*pmt), nil
 }
 
 // InterestAndPrincipalPayment returns an array of interest payments, an
-// principal payments and possibly an error.
-func InterestAndPrincipalPayments(
+// principal payments and an error.
+func interest_and_principal_payments(
     rate float64,
     numPeriods int,
     pv float64,
@@ -115,7 +114,7 @@ func InterestAndPrincipalPayments(
     pmt, err := Payment(rate, numPeriods, pv, fv, paymentType)
 
     if err != nil {
-        return ipmt, ppmt, err
+        return ipmt, ppmt, fmt.Errorf("interest_and_principal_payments internal error: %v", err)
     }
 
     capital := pv
@@ -124,18 +123,19 @@ func InterestAndPrincipalPayments(
         if paymentType == PayBegin && i == 1 {
             ipmt = append(ipmt, 0.00)
         } else {
-            interest_payment := round2(- capital * rate)
+            interest_payment := - capital * rate
             ipmt = append(ipmt, interest_payment)
-
-            principal_payment := round2(pmt - interest_payment)
+            principal_payment := pmt - interest_payment
             ppmt = append(ppmt, principal_payment)
-
-            capital += principal_payment
+            capital = capital + principal_payment
         }
     }
 
+    capital = Round2(capital)
+
     if capital != fv {
-        return ipmt, ppmt, errors.New("The final values of the loan do not match")
+        log.Printf("Capital: %v  FV: %v", capital, fv)
+        return ipmt, ppmt, &ValidationError{"pv", capital, "pv doesnt' match fv at the end of the numPeriods"}
     }
     return ipmt, ppmt, nil
 }
@@ -152,10 +152,10 @@ func PrincipalPayments(
     []float64,
     error,
 ) {
-    _, ppmt, err := InterestAndPrincipalPayments(rate, numPeriods, pv, fv, paymentType)
+    _, ppmt, err := interest_and_principal_payments(rate, numPeriods, pv, fv, paymentType)
 
     if err != nil {
-        return ppmt, err
+        return ppmt, fmt.Errorf("interest_and_principal_payments internal error: %v", err)
     }
     return ppmt, nil
 }
@@ -172,10 +172,10 @@ func InterestPayments(
     []float64,
     error,
 ) {
-    ipmt, _, err := InterestAndPrincipalPayments(rate, numPeriods, pv, fv, paymentType)
+    ipmt, _, err := interest_and_principal_payments(rate, numPeriods, pv, fv, paymentType)
 
     if err != nil {
-        return ipmt, err
+        return ipmt, fmt.Errorf("interest_and_principal_payments internal error: %v", err)
     }
     return ipmt, nil
 }
@@ -193,15 +193,15 @@ func PresentValue(
     err error,
 ) {
     if numPeriods <= 0 {
-        return 0, errors.New("Number of periods must be greater than 0")
+        return 0.0, &ValidationError{"numPeriods", numPeriods, "The value must be greater than 0"}
     }
     if paymentType != PayEnd && paymentType != PayBegin {
-        return 0, errors.New("Payment must be pay-end or pay-begin")
+		return 0.0, &ValidationError{"paymentType", paymentType, "The value must be 0 (PayEnd) or 1 (PayBegin)"}
     }
     if rate != 0 {
         pv = (-pmt*(1+rate*float64(paymentType))*((math.Pow(1+rate, float64(numPeriods))-1)/rate) - fv) / math.Pow(1+rate, float64(numPeriods))
     } else {
         pv = -fv - pmt*float64(numPeriods)
     }
-    return round2(pv), nil
+    return Round2(pv), nil
 }

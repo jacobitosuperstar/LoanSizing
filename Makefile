@@ -1,7 +1,7 @@
 run:
-	go run cmd/api/main.go
+	go run cmd/api/*.go
 build:
-	go build cmd/api/main.go
+	go build cmd/api/*.go
 test:
 	go test ./...
 
