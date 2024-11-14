@@ -31,8 +31,8 @@ type LoanSizer struct {
     LoanOriginationFees float64     `json:"loan_origination_fees"`
     // Calculated fields
     MaximumLoanAmount float64       `json:"maximum_loan_amount"`
-    YearlyLoanPayment float64       `json:"yearly_loan_payment"`
-    YearlyIOLoanPayment float64     `json:"yearly_io_loan_payment"`
+    LoanPayment float64             `json:"yearly_loan_payment"`
+    IOLoanPayment float64           `json:"yearly_io_loan_payment"`
     BalloonPayment float64          `json:"balloon_payment"`
 }
 
@@ -80,18 +80,18 @@ func (ls *LoanSizer) SetMaximumLoanAmount () error {
     return nil
 }
 
-// SetYearlyIOLoanPayment sets the loan payments during the IO periods
-func (ls *LoanSizer) SetYearlyIOLoanPayment () {
-    ls.YearlyIOLoanPayment = ff.YearlyIOPayment(ls.Rate, ls.MaximumLoanAmount)
+// SetIOLoanPayment sets the loan payments during the IO periods
+func (ls *LoanSizer) SetIOLoanPayment () {
+    ls.IOLoanPayment = ff.IOPayment(ls.Rate, ls.MaximumLoanAmount)
 }
 
-// SetYearlyLoanPayment sets the yearly loan payments for the maximum amount
-func (ls *LoanSizer) SetYearlyLoanPayment () error {
-    yearly_loan_payment, err := ff.YearlyPayment(ls.Rate, ls.Amortization, ls.MaximumLoanAmount, 0, 0)
+// SetLoanPayment sets the yearly loan payments for the maximum amount
+func (ls *LoanSizer) SetLoanPayment () error {
+    loan_payment, err := ff.Payment(ls.Rate, ls.Amortization, ls.MaximumLoanAmount, 0, 0)
     if err != nil {
-        return fmt.Errorf("YearlyPayment internal error: %v", err)
+        return fmt.Errorf("Payment internal error: %v", err)
     }
-    ls.YearlyLoanPayment = yearly_loan_payment
+    ls.LoanPayment = loan_payment
     return nil
 }
 

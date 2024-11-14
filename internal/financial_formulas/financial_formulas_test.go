@@ -49,23 +49,23 @@ func TestIOPayment(t *testing.T){
     }
 }
 
-func TestYearlyIOPayment(t *testing.T){
-    var testCases = []struct {
-        rate float64
-        pv float64
-        want float64
-    }{
-        {0.00, 0.00, 0.00},
-        {100, 0.00375, 4.50},
-        {200, 0.00375, 9.00},
-    }
-
-    for _, test := range testCases {
-        if got, _ := YearlyIOPayment(test.rate, test.pv); got != test.want {
-            t.Errorf("got: %g, wanted: %g", got, test.want)
-        }
-    }
-}
+// func TestYearlyIOPayment(t *testing.T){
+//     var testCases = []struct {
+//         rate float64
+//         pv float64
+//         want float64
+//     }{
+//         {0.00, 0.00, 0.00},
+//         {100, 0.00375, 4.50},
+//         {200, 0.00375, 9.00},
+//     }
+//
+//     for _, test := range testCases {
+//         if got, _ := YearlyIOPayment(test.rate, test.pv); got != test.want {
+//             t.Errorf("got: %g, wanted: %g", got, test.want)
+//         }
+//     }
+// }
 
 func TestPayment(t *testing.T){
     var testCases = []struct {
@@ -125,63 +125,63 @@ func TestPayment(t *testing.T){
     }
 }
 
-func TestYearlyPayment(t *testing.T){
-    var testCases = []struct {
-        name string
-        rate float64
-        numPeriods int
-        pv float64
-        fv float64
-        paymentType int
-        want float64
-    }{
-        {
-            name: "Everything Zero",
-            rate: 0,
-            numPeriods: 0,
-            pv: 0,
-            fv: 0,
-            paymentType: 0,
-            want: 0,
-        },
-        {
-            name: "Everything Zero, Valid numPeriods",
-            rate: 0,
-            numPeriods: 12,
-            pv: 0,
-            fv: 0,
-            paymentType: 0,
-            want: 0,
-        },
-        {
-            name: "Invalid paymentType",
-            rate: 0.00375,
-            numPeriods: 12,
-            pv: 100,
-            fv: 0,
-            paymentType: 5,
-            want: 0,
-        },
-        {
-            name: "Totally valid case",
-            rate: 0.00375,
-            numPeriods: 12,
-            pv: 100,
-            fv: 0,
-            paymentType: 0,
-            want: -102.48,
-        },
-    }
-
-    for _, test := range testCases {
-        t.Run(test.name, func(t *testing.T) {
-            got, _ := YearlyPayment(test.rate, test.numPeriods, test.pv, test.fv, test.paymentType)
-            if got != test.want {
-                t.Errorf("got: %g, wanted: %g", got, test.want)
-            }
-        })
-    }
-}
+// func TestYearlyPayment(t *testing.T){
+//     var testCases = []struct {
+//         name string
+//         rate float64
+//         numPeriods int
+//         pv float64
+//         fv float64
+//         paymentType int
+//         want float64
+//     }{
+//         {
+//             name: "Everything Zero",
+//             rate: 0,
+//             numPeriods: 0,
+//             pv: 0,
+//             fv: 0,
+//             paymentType: 0,
+//             want: 0,
+//         },
+//         {
+//             name: "Everything Zero, Valid numPeriods",
+//             rate: 0,
+//             numPeriods: 12,
+//             pv: 0,
+//             fv: 0,
+//             paymentType: 0,
+//             want: 0,
+//         },
+//         {
+//             name: "Invalid paymentType",
+//             rate: 0.00375,
+//             numPeriods: 12,
+//             pv: 100,
+//             fv: 0,
+//             paymentType: 5,
+//             want: 0,
+//         },
+//         {
+//             name: "Totally valid case",
+//             rate: 0.00375,
+//             numPeriods: 12,
+//             pv: 100,
+//             fv: 0,
+//             paymentType: 0,
+//             want: -102.48,
+//         },
+//     }
+//
+//     for _, test := range testCases {
+//         t.Run(test.name, func(t *testing.T) {
+//             got, _ := YearlyPayment(test.rate, test.numPeriods, test.pv, test.fv, test.paymentType)
+//             if got != test.want {
+//                 t.Errorf("got: %g, wanted: %g", got, test.want)
+//             }
+//         })
+//     }
+// }
 
 func TestPrincipalPayments(t *testing.T){
     var testCases = []struct {

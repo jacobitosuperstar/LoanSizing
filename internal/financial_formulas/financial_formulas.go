@@ -2,12 +2,13 @@
 // places.
 // TODO: Formulas needed
 // [X] IOPayment (monthly)
-// [X] YearlyIOPayment
 // [X] Payment (monthly)
-// [X] YearlyPayment
 // [X] PrincipalPayment (monthly)
 // [X] InterestPayment (monthly)
 // [X] PresentValue
+// If everything is already in years, this is not needed
+// [X] YearlyIOPayment
+// [X] YearlyPayment
 
 package financial_formulas
 
@@ -36,21 +37,21 @@ func IOPayment(
 ) (
     pmt float64,
 ) {
-    pmt = (pv*rate)
+    pmt = - pv * rate
     return Round2(pmt)
 }
 
-// YearlyIOPayment returns the yearly interest only payment for a cash flow
-// with a constant interest rate.
-func YearlyIOPayment(
-    rate float64,
-    pv float64,
-) (
-    pmt float64,
-) {
-    pmt = 12*(pv*rate)
-    return Round2(pmt)
-}
+// // YearlyIOPayment returns the yearly interest only payment for a cash flow
+// // with a constant interest rate.
+// func YearlyIOPayment(
+//     rate float64,
+//     pv float64,
+// ) (
+//     pmt float64,
+// ) {
+//     pmt = 12*(pv*rate)
+//     return Round2(pmt)
+// }
 
 // Payment returns the constant payment for a cash flow with a constant
 // interest rate.
@@ -78,25 +79,25 @@ func Payment(
 	return Round2(pmt), nil
 }
 
-// YearlyPayment returns the yearly loan payment for a cash flow with a
-// constant interest rate.
-func YearlyPayment(
-    rate float64,
-    numPeriods int,
-    pv float64,
-    fv float64,
-    paymentType int,
-) (
-    pmt float64,
-    err error,
-) {
-    pmt, err = Payment(rate, numPeriods, pv, fv, paymentType)
-
-    if err != nil {
-        return 0, fmt.Errorf("YearlyPaymet internal error: %v", err)
-    }
-    return Round2(12*pmt), nil
-}
+// // YearlyPayment returns the yearly loan payment for a cash flow with a
+// // constant interest rate.
+// func YearlyPayment(
+//     rate float64,
+//     numPeriods int,
+//     pv float64,
+//     fv float64,
+//     paymentType int,
+// ) (
+//     pmt float64,
+//     err error,
+// ) {
+//     pmt, err = Payment(rate, numPeriods, pv, fv, paymentType)
+//
+//     if err != nil {
+//         return 0, fmt.Errorf("YearlyPaymet internal error: %v", err)
+//     }
+//     return Round2(12*pmt), nil
+// }
 
 // InterestAndPrincipalPayment returns an array of interest payments, an
 // principal payments and an error.

@@ -90,9 +90,9 @@ func handleLoanSizer(
         return
     }
 
-    loan_sizer.SetYearlyIOLoanPayment()
+    loan_sizer.SetIOLoanPayment()
 
-    err = loan_sizer.SetYearlyLoanPayment()
+    err = loan_sizer.SetLoanPayment()
     if err != nil {
         var validationError *ff.ValidationError
         var response Response
