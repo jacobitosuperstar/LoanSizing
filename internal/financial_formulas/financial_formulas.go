@@ -29,6 +29,11 @@ func Round2(num float64) float64 {
     return (math.Round(num*100)/100)
 }
 
+// Round4 returns a float number rounded to 4 decimals
+func Round4(num float64) float64 {
+    return (math.Round(num*10000)/10000)
+}
+
 // IOPayment returns the interest only payment for a cash flow with a constant
 // interest rate.
 func IOPayment(
@@ -124,9 +129,9 @@ func interest_and_principal_payments(
         if paymentType == PayBegin && i == 1 {
             ipmt = append(ipmt, 0.00)
         } else {
-            interest_payment := - capital * rate
+            interest_payment := Round2(- capital * rate)
             ipmt = append(ipmt, interest_payment)
-            principal_payment := pmt - interest_payment
+            principal_payment := Round2(pmt - interest_payment)
             ppmt = append(ppmt, principal_payment)
             capital = capital + principal_payment
         }

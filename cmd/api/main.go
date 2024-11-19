@@ -70,7 +70,7 @@ func handleLoanSizer(
         return
     }
 
-    err = loan_sizer.SetMaximumLoanAmount()
+    loan_sizer, err = ls.InitLoanSizer(loan_sizer)
     if err != nil {
         var validationError *ff.ValidationError
         var response Response
@@ -87,45 +87,6 @@ func handleLoanSizer(
             log.Println(err)
             JSONResponse(w, http.StatusInternalServerError, response)
         }
-        return
-    }
-
-    loan_sizer.SetIOLoanPayment()
-
-    err = loan_sizer.SetLoanPayment()
-    if err != nil {
-        var validationError *ff.ValidationError
-        var response Response
-
-        if errors.Is(err, validationError) {
-            response = Response{
-                Message: fmt.Sprintf("Validation Error: %v", err),
-            }
-        } else {
-            response = Response{
-                Message: "Internal Server Error",
-            }
-            log.Println(err)
-        }
-        JSONResponse(w, http.StatusBadRequest, response)
-        return
-    }
-    loan_sizer.SetBalloonPayment()
-    if err != nil {
-        var validationError *ff.ValidationError
-        var response Response
-
-        if errors.Is(err, validationError) {
-            response = Response{
-                Message: fmt.Sprintf("Validation Error: %v", err),
-            }
-        } else {
-            response = Response{
-                Message: "Internal Server Error",
-            }
-            log.Println(err)
-        }
-        JSONResponse(w, http.StatusBadRequest, response)
         return
     }
 

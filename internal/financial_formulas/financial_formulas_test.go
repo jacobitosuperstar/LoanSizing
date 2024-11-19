@@ -25,7 +25,7 @@ func TestRound2(t *testing.T) {
     }
 
     for _, test := range testCases {
-        if got := round2(test.input); got != test.want {
+        if got := Round2(test.input); got != test.want {
             t.Errorf("got: %g, wanted: %g", got, test.want)
         }
     }
@@ -38,12 +38,12 @@ func TestIOPayment(t *testing.T){
         want float64
     }{
         {0.00, 0.00, 0.00},
-        {100, 0.00375, 0.38},
-        {200, 0.00375, 0.75},
+        {100, 0.00375, - 0.38},
+        {200, 0.00375, - 0.75},
     }
 
     for _, test := range testCases {
-        if got, _ := IOPayment(test.rate, test.pv); got != test.want {
+        if got  := IOPayment(test.rate, test.pv); got != test.want {
             t.Errorf("got: %g, wanted: %g", got, test.want)
         }
     }
